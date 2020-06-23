@@ -1,1 +1,2 @@
-"# message" 
+The video I am using for texture can be downloaded from https://christian-denny.s3-us-west-2.amazonaws.com/marshall-mcluhan.mp4
+The file is too large to upload to github bit inorder to run in this project it needs to be added to your project file. There is a webGL crossrefference error that will not allow running the video as a texture from the url. That fix will be in future versions of this project.
