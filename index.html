@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Marshall McLuhan Messsage-Massage on a cube</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <button id="start" onclick="init()">Start the Experience</button>
+  <!-- <style>
+    body {
+      color: #fff;
+      font-family: Monospace;
+      font-size: 13px;
+      text-align: center;
+      background-color: rgb(112, 93, 93);
+      margin: 0px;
+      overflow: hidden;
+    }
+    
+    #info {
+      position: absolute;
+      top: 0px;
+      width: 100%;
+      padding: 5px;
+    }
+    
+    a {
+      color: #f00;
+    }
+  </style> -->
+</head>
+
+<body>
+  <video src="./marshall-mcluhan.mp4" id="vid" loop preload="auto" style="display:none"></video>
+  <script src="./three.min.js"></script>
+  <script src="./DragControls.js"></script>
+  <script src="./TrackballControls.js"></script>
+  <script src="./stats.min.js"></script>
+  <script>
+    var cube;
+    var renderer;
+    var scene;
+    var camera;
+    var controls;
+    var container;
+
+    function init() {
+        document.getElementById('start').style.display = 'none';
+      container = document.createElement('div');
+      document.body.appendChild(container);
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf0f0f0);
+
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+
+
+      var light = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(light);
+
+      var light1 = new THREE.PointLight(0xffffff, 0.5);
+      scene.add(light1);
+
+      var light2 = new THREE.SpotLight(0xffffff, 1.5);
+      light2.position.set(0, 500, 200);
+      light2.angle = Math.PI / 9;
+      light2.castShadow = true;
+      light2.shadow.camera.near = 500;
+      light2.shadow.camera.far = 4000;
+      light2.shadow.mapSize.width = 4096;
+      light2.shadow.mapSize.height = 4096;
+      light2.shadow.radius = 10;
+      scene.add(light2);
+
+      // camera.position.z = 3;
+      controls = new THREE.TrackballControls(camera);
+      controls.rotateSpeed = 1.0;
+      controls.zoomSpeed = 1.2;
+      controls.panSpeed = 0.8;
+      controls.noZoom = false;
+      controls.noPan = false;
+      controls.staticMoving = true;
+      controls.dynamicDampingFactor = 0.3;
+      controls.keys = [65, 83, 68];
+      controls.addEventListener('change', render)
+
+      renderer = new THREE.WebGLRenderer({
+        antialias: true
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFShadowMap;
+      container.appendChild(renderer.domElement);
+
+      window.addEventListener('resize', onWindowResize, false);
+      var geometry = new THREE.BoxGeometry(10, 10, 10);
+      var video = document.getElementById('vid');
+      video.crossOrigin = "";
+      video.play();
+      var texture = new THREE.VideoTexture(video);
+      texture.minFilter = THREE.LinearFilter;
+      texture.maxFilter = THREE.LinearFilter;
+      var material = new THREE.MeshLambertMaterial({
+        color: 0xffffff,
+        map: texture
+      });
+
+
+      cube = new THREE.Mesh(geometry, material);
+      cube.castShadow = true;
+      scene.add(cube);
+      cube.position.z = -20;
+      cube.rotation.x = 5;
+      cube.rotation.y = 5;
+      var dragControls = new THREE.DragControls([cube], camera, renderer.domElement);
+      dragControls.addEventListener('dragstart', function() {
+        controls.enabled = false;
+      });
+      dragControls.addEventListener('dragend', function() {
+        controls.enabled = true;
+      });
+
+      var planeShape = new THREE.PlaneBufferGeometry(150, 150, 1);
+      var planeColor = new THREE.MeshLambertMaterial({
+        color: 0x999999
+      });
+      var plane = new THREE.Mesh(planeShape, planeColor);
+      plane.receiveShadow = true;
+
+      scene.add(plane);
+      plane.position.z = -15;
+      plane.position.y = -15;
+      plane.rotation.x = -1.5708;
+
+      animate();
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    //attempted to add drag functionality this way, got lost in the woods
+    // renderer.render(scene, camera);
+
+    var animate = function() {
+
+      cube.rotation.x += 0.005;
+      cube.rotation.y += 0.005;
+      cube.position.y = Math.max(cube.position.y, -2);
+      controls.update();
+      render();
+      requestAnimationFrame(animate);
+      //   console.log('test');
+    }
+
+    function render() {
+      renderer.render(scene, camera);
+    }
+    // init();
+  </script>
+</body>
